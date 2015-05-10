@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/ajsnow/llvm"
+	"llvm.org/llvm/bindings/go/llvm"
 )
 
 // Exec JIT-compiles the top level statements in the roots chan and,

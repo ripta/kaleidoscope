@@ -1,6 +1,6 @@
 package main
 
-import "github.com/ajsnow/llvm"
+import "llvm.org/llvm/bindings/go/llvm"
 
 // Node Nodes
 

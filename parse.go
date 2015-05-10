@@ -5,7 +5,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/ajsnow/llvm"
+	"llvm.org/llvm/bindings/go/llvm"
 	"github.com/davecgh/go-spew/spew"
 )
 
