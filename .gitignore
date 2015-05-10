@@ -22,3 +22,6 @@ _testmain.go
 *.exe
 *.test
 kaleidoscope
+examples/func
+a.out
+
