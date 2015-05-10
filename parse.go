@@ -5,8 +5,8 @@ import (
 	"os"
 	"strconv"
 
-	"llvm.org/llvm/bindings/go/llvm"
 	"github.com/davecgh/go-spew/spew"
+	"llvm.org/llvm/bindings/go/llvm"
 )
 
 // A parser holds the internal state of the AST being constructed. Instead of
