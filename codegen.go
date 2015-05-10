@@ -8,12 +8,12 @@ import (
 )
 
 var (
-	rootModule             = llvm.NewModule("root")
-	rootFuncPassMgr        = llvm.NewFunctionPassManagerForModule(rootModule)
-	builder                = llvm.NewBuilder()
-	namedVals              = map[string]llvm.Value{}
-	options                = llvm.NewMCJITCompilerOptions()
-	execEngine llvm.ExecutionEngine
+	rootModule      = llvm.NewModule("root")
+	rootFuncPassMgr = llvm.NewFunctionPassManagerForModule(rootModule)
+	builder         = llvm.NewBuilder()
+	namedVals       = map[string]llvm.Value{}
+	options         = llvm.NewMCJITCompilerOptions()
+	execEngine      llvm.ExecutionEngine
 )
 
 func initExecutionEngine() {
