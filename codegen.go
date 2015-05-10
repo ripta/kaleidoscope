@@ -238,7 +238,7 @@ func (n *variableExprNode) codegen() llvm.Value {
 func (n *fnCallNode) codegen() llvm.Value {
 	callee := rootModule.NamedFunction(n.callee)
 	if callee.IsNil() {
-		return ErrorV("unknown function referenced")
+		return ErrorV("unknown function referenced: " + n.callee)
 	}
 
 	if callee.ParamsCount() != len(n.args) {
