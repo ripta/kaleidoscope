@@ -18,6 +18,14 @@ Other Resources
   export CGO_LDFLAGS="`llvm-config --ldflags --libs --system-libs all`"
   go build -tags byollvm
 
-  ./kaleidoscope -b --llvm examples/func.k 2>examples/func.ll
-  llc examples/func.ll -filetype=obj -o examples/func.o
-  llvm-gcc -lc examples/func.o -o examples/func
+  ./kaleidoscope -b --llvm=examples/func.ll examples/func.k
+  llc -filetype=obj -o examples/func.o examples/func.ll
+  llvm-gcc -o examples/func -lc examples/func.o
+
+  ./kaleidoscope -b --obj=examples/func.o examples/func.k
+  llvm-gcc -c lib.c -o lib.o
+  llvm-gcc -o examples/func examples/func.o lib.o
+
+  ./kaleidoscope -b --obj=examples/mandel.o examples/mandel.k
+  llvm-gcc -c lib.c -o lib.o
+  llvm-gcc -o examples/mandel examples/mandel.o lib.o
