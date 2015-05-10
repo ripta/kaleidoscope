@@ -10,19 +10,39 @@ import (
 var (
 	rootModule             = llvm.NewModule("root")
 	rootFuncPassMgr        = llvm.NewFunctionPassManagerForModule(rootModule)
-	nativeInitErr          = llvm.InitializeNativeTarget()
-	execEngine, jitInitErr = llvm.NewJITCompiler(rootModule, 0)
 	builder                = llvm.NewBuilder()
 	namedVals              = map[string]llvm.Value{}
+	options                = llvm.NewMCJITCompilerOptions()
+	execEngine llvm.ExecutionEngine
 )
 
-func init() {
-	if nativeInitErr != nil {
-		fmt.Fprintln(os.Stderr, nativeInitErr)
+func initExecutionEngine() {
+	var err error
+	llvm.LinkInMCJIT()
+
+	err = llvm.InitializeNativeTarget()
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "Native target initialization error:")
+		fmt.Fprintln(os.Stderr, err)
 		os.Exit(-1)
 	}
-	if jitInitErr != nil {
-		fmt.Fprintln(os.Stderr, jitInitErr)
+
+	err = llvm.InitializeNativeAsmPrinter()
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "ASM printer initialization error:")
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(-1)
+	}
+
+	options.SetMCJITOptimizationLevel(2)
+	options.SetMCJITEnableFastISel(true)
+	options.SetMCJITNoFramePointerElim(true)
+	options.SetMCJITCodeModel(llvm.CodeModelJITDefault)
+	execEngine, err = llvm.NewMCJITCompiler(rootModule, options)
+
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "JIT Compiler initialization error:")
+		fmt.Fprintln(os.Stderr, err)
 		os.Exit(-1)
 	}
 }

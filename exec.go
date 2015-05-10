@@ -12,16 +12,19 @@ import (
 func Exec(roots <-chan node, printLLVMIR bool) {
 	for n := range roots {
 		llvmIR := n.codegen()
+
 		if llvmIR.IsNil() {
 			fmt.Fprintln(os.Stderr, "Error: Codegen failed; skipping.")
 			continue
 		}
+
 		if printLLVMIR {
 			llvmIR.Dump()
 		}
+
 		if isTopLevelExpr(n) {
 			returnval := execEngine.RunFunction(llvmIR, []llvm.GenericValue{})
-			fmt.Println(returnval.Float(llvm.DoubleType()))
+			fmt.Printf("Evaluated to: %v\n", returnval.Float(llvm.DoubleType()))
 		}
 	}
 }

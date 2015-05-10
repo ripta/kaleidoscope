@@ -16,6 +16,8 @@ var (
 
 func main() {
 	flag.Parse()
+
+	initExecutionEngine()
 	if *optimized {
 		Optimize()
 	}
@@ -40,8 +42,10 @@ func main() {
 
 		// stdin
 		if !*batch {
+			fmt.Printf("ready> ")
 			lex.Add(os.Stdin)
 		}
+
 		lex.Done()
 	}()
 
