@@ -17,3 +17,7 @@ Other Resources
   export CGO_CXXFLAGS=-std=c++11
   export CGO_LDFLAGS="`llvm-config --ldflags --libs --system-libs all`"
   go build -tags byollvm
+
+  ./kaleidoscope -b --llvm examples/func.k 2>examples/func.ll
+  llc examples/func.ll -filetype=obj -o examples/func.o
+  llvm-gcc -lc examples/func.o -o examples/func
