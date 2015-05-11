@@ -10,3 +10,9 @@ double putchard(double x) {
     fflush(stdout);
     return 0;
 }
+
+double putdouble(double x) {
+	printf("result: %0.6f", x);
+	fflush(stdout);
+	return 0;
+}
