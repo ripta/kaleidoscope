@@ -54,4 +54,4 @@ def mandel(realstart imagstart realmag imagmag)
   mandelhelp(realstart, realstart+realmag*78, realmag,
              imagstart, imagstart+imagmag*40, imagmag);
 
-mandel(-2.3, -1.3, 0.05, 0.07)
+mandel(-2.3, -1.3, 0.05, 0.07);
