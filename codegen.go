@@ -14,10 +14,13 @@ var (
 	namedVals       = map[string]llvm.Value{}
 	options         = llvm.NewMCJITCompilerOptions()
 	execEngine      llvm.ExecutionEngine
+	machine         llvm.TargetMachine
 )
 
 func initExecutionEngine() {
 	var err error
+	var target llvm.Target
+
 	llvm.LinkInMCJIT()
 
 	err = llvm.InitializeNativeTarget()
@@ -34,17 +37,35 @@ func initExecutionEngine() {
 		os.Exit(-1)
 	}
 
+	target, err = llvm.GetTargetFromTriple(llvm.DefaultTargetTriple())
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "Cannot get target:")
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(-1)
+	}
+
+	// fmt.Println("TargetTriple: " + llvm.DefaultTargetTriple())
+	// fmt.Println("TargetDescription: " + target.Description())
+
+	machine = target.CreateTargetMachine(llvm.DefaultTargetTriple(),
+		"", "",
+		llvm.CodeGenLevelNone,
+		llvm.RelocDefault,
+		llvm.CodeModelSmall)
+	// fmt.Println("TargetMachine.TargetData: " + machine.TargetData().String())
+
 	options.SetMCJITOptimizationLevel(2)
 	options.SetMCJITEnableFastISel(true)
 	options.SetMCJITNoFramePointerElim(true)
-	options.SetMCJITCodeModel(llvm.CodeModelJITDefault)
+	options.SetMCJITCodeModel(llvm.CodeModelDefault)
 	execEngine, err = llvm.NewMCJITCompiler(rootModule, options)
-
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "JIT Compiler initialization error:")
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(-1)
 	}
+
+	// fmt.Println("ExecutionEngine.TargetData: " + execEngine.TargetData().String())
 }
 
 func Optimize() {
@@ -340,7 +361,7 @@ func (n *functionNode) codegen() llvm.Value {
 	p := n.proto.(*fnPrototypeNode)
 	theFunction := n.proto.codegen()
 	if theFunction.IsNil() {
-		return ErrorV("prototype")
+		return ErrorV("prototype missing")
 	}
 
 	// if p.isOperator && len(p.args) == 2 {
