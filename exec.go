@@ -7,9 +7,7 @@ import (
 	"llvm.org/llvm/bindings/go/llvm"
 )
 
-// Exec JIT-compiles the top level statements in the roots chan and,
-// if they are expressions, executes them.
-func Exec(roots <-chan node, printLLVMIR bool) {
+func EmitIR(roots <-chan node) {
 	for n := range roots {
 		llvmIR := n.codegen()
 
@@ -18,8 +16,24 @@ func Exec(roots <-chan node, printLLVMIR bool) {
 			continue
 		}
 
-		if printLLVMIR {
-			llvmIR.Dump()
+		llvmIR.Dump()
+
+		// if isTopLevelExpr(n) {
+		// 	returnval := execEngine.RunFunction(llvmIR, []llvm.GenericValue{})
+		// 	fmt.Printf("Evaluated to: %v\n", returnval.Float(llvm.DoubleType()))
+		// }
+	}
+}
+
+// Exec JIT-compiles the top level statements in the roots chan and,
+// if they are expressions, executes them.
+func Exec(roots <-chan node) {
+	for n := range roots {
+		llvmIR := n.codegen()
+
+		if llvmIR.IsNil() {
+			fmt.Fprintln(os.Stderr, "Error: Codegen failed; skipping.")
+			continue
 		}
 
 		if isTopLevelExpr(n) {

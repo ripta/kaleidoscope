@@ -16,6 +16,7 @@ var (
 	printAst    = flag.Bool("ast", false, "print abstract syntax tree")
 	printLLVMIR = flag.Bool("llvm", false, "print LLVM generated code")
 	outputObj   = flag.String("obj", "", "output obj")
+	verbose     = flag.Bool("verbose", false, "verbose output")
 )
 
 func main() {
@@ -32,9 +33,7 @@ func main() {
 		tokens = DumpTokens(lex.Tokens())
 	}
 
-	// add files for the lexer to lex
 	go func() {
-		// command line filenames
 		for _, fn := range flag.Args() {
 			f, err := os.Open(fn)
 			if err != nil {
@@ -44,7 +43,6 @@ func main() {
 			lex.Add(f)
 		}
 
-		// stdin
 		if !*batch {
 			fmt.Printf("ready> ")
 			lex.Add(os.Stdin)
@@ -55,12 +53,13 @@ func main() {
 
 	nodes := Parse(tokens)
 	nodesForExec := nodes
+
 	if *printAst {
 		nodesForExec = DumpTree(nodes)
-	}
-
-	if *outputObj == "" {
-		Exec(nodesForExec, *printLLVMIR)
+	} else if *printLLVMIR {
+		EmitIR(nodesForExec)
+	} else if *outputObj == "" {
+		Exec(nodesForExec)
 	} else {
 		buffer, err := machine.EmitToMemoryBuffer(rootModule, llvm.ObjectFile)
 		if err != nil {

@@ -44,15 +44,19 @@ func initExecutionEngine() {
 		os.Exit(-1)
 	}
 
-	// fmt.Println("TargetTriple: " + llvm.DefaultTargetTriple())
-	// fmt.Println("TargetDescription: " + target.Description())
+	if *verbose {
+		fmt.Println("Initialize: TargetTriple = " + llvm.DefaultTargetTriple())
+		fmt.Println("Initialize: TargetDescription = " + target.Description())
+	}
 
 	machine = target.CreateTargetMachine(llvm.DefaultTargetTriple(),
 		"", "",
 		llvm.CodeGenLevelNone,
 		llvm.RelocDefault,
 		llvm.CodeModelSmall)
-	// fmt.Println("TargetMachine.TargetData: " + machine.TargetData().String())
+	if *verbose {
+		fmt.Println("Initialize: TargetMachine.TargetData = " + machine.TargetData().String())
+	}
 
 	options.SetMCJITOptimizationLevel(2)
 	options.SetMCJITEnableFastISel(true)
@@ -65,7 +69,9 @@ func initExecutionEngine() {
 		os.Exit(-1)
 	}
 
-	// fmt.Println("ExecutionEngine.TargetData: " + execEngine.TargetData().String())
+	if *verbose {
+		fmt.Println("Initialize: ExecutionEngine.TargetData = " + execEngine.TargetData().String())
+	}
 }
 
 func Optimize() {
