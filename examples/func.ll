@@ -16,7 +16,6 @@ entry:
 declare i32 @puts(i8* nocapture) nounwind
 
 define i32 @main() {
-  %restmp = call double @0()
-  call i32 @puts(i8 %restmp)
+  call double @0()
   ret i32 0
 }
